@@ -7,20 +7,30 @@ import { Provider } from "react-redux";
 import { createStore, combineReducers } from "redux";
 import uuid from "uuid";
 
-export function addToDo(value) {
+export function addToDo(content) {
+ /*  store.dispatch(changeCurrentValue("")); */
   return {
     type: "ADD_TODO",
     payload: {
-      value: value,
+      value: content,
       completed: false,
       id: uuid()
     }
   };
 }
-
+/* 
+export function changeCurrentValue(value) {
+  return {
+    type: "CHANGE_CURRENT_VALUE",
+    payload: {
+      value: value
+    }
+  };
+}
+ */
 export function markAsCompleted(id) {
   return {
-    type: "MarkAsCompleted",
+    type: "MARK_AS_COMPLETED",
     payload: id
   };
 }
@@ -32,17 +42,30 @@ function toDoReducer(state = [], action) {
     case "MARK_AS_COMPLETED":
       return state.map(toDo => {
         if (toDo.id === action.payload) {
-          return { ...toDo, apocryphal: true };
-        } else {
-          return toDo;
+          if (toDo.completed) {
+            return { ...toDo, completed: false };
+          }
+          return { ...toDo, completed: true };
         }
+        return toDo;
       });
     default:
       return state;
   }
 }
+/* 
+function currentValueReducer(state = "", action) {
+  if (action.type === "CHANGE_CURRENT_VALUE") {
+    return action.payload;
+  } else {
+    return state;
+  }
+} */
 
-const combinedReducer = combineReducers({ toDos: toDoReducer });
+const combinedReducer = combineReducers({
+  toDos: toDoReducer,
+  /* currentValue: currentValueReducer */
+});
 
 const store = createStore(
   combinedReducer,
